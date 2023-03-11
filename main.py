@@ -19,6 +19,7 @@ if (data['totalResultCount'] > 0):
             myprintln = myprintln, currency_string
         if "color" in i["specifications"]:
             myprintln = myprintln, "exterior color: ", i["specifications"]["color"]["value"]
+        #   debug
         #   if i['vin'] == '5UX23EM02P9P75217':
         #       print(json.dumps(i, indent=1))
         myprintln = myprintln, i['website']['href']
