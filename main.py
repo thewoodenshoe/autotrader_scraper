@@ -26,5 +26,8 @@ if (data['totalResultCount'] > 0):
         # Now we're gonna filter
         if (i["specifications"]["interiorColor"]["value"] not in ('Coffee','Cognac','Black','Coffee Sensafin','Coffee W/Sensafin Upholstery','Cognac Sensafin')):
             if 'Executive Package' in i['packages']:
-                print(json.dumps(myprintln, indent=1))
-                #print(json.dumps(i, indent=1))
+                # sold
+                if i["vin"] not in ('5UX23EM06P9R78708'):
+                   print(json.dumps(myprintln, indent=1))
+                   print(i["vin"])
+                   #print(json.dumps(i, indent=1))
