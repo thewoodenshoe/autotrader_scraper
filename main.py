@@ -8,14 +8,12 @@ data = json.loads(response.read())
 if (data['totalResultCount'] > 0):
     # for i in data:
     #    print(json.dumps(i, indent=1))
-    print( data['totalResultCount'])
+    # print( data['totalResultCount'])
     x = 0
     for i in data['listings']:
         x += 1
         #   debug
         # print(i['vin'])
-        if i['vin'] == '5UX23EM04P9N98461':
-            print(json.dumps(i, indent=1))
 
         myprintln = i["title"], "Interior color:", i["specifications"]["interiorColor"]["value"], i["vin"]
         if "packages" in i:
@@ -33,7 +31,7 @@ if (data['totalResultCount'] > 0):
         myprintln = myprintln, i['website']['href']
 
         # Now we're gonna filter
-        if (i["specifications"]["interiorColor"]["value"] not in ('Coffee','Cognac','Black','Coffee Sensafin','Coffee W/Sensafin Upholstery','Cognac Sensafin')):
+        if (i["specifications"]["interiorColor"]["value"] not in ('Coffee','Cognac','Black','Coffee Sensafin','Tartufo', 'Coffee W/Sensafin Upholstery','Cognac Sensafin')):
             if "packages" in i and 'Executive Package' in i['packages']:
                 # sold
                 if i["vin"] not  in ('5UX23EM06P9R78708'):
