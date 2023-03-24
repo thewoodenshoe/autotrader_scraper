@@ -2,7 +2,7 @@ from urllib.request import urlopen
 import json
 
 minPrice=75000
-maxPrice=85000
+maxPrice=850000
 url = f"https://www.autotrader.com/rest/searchresults/base?startYear=2023&zip=29492&makeCode1=BMW&modelCode1=BMWX7&searchRadius=0&minPrice={minPrice}&maxPrice={maxPrice}&sortBy=datelistedDESC"
 response = urlopen(url)
 data = json.loads(response.read())
@@ -26,7 +26,6 @@ def addTag(i, tagName, overwriteLabel):
 if (data['totalResultCount'] > 0):
     counter = 0
     for i in data['listings']:
-        counter += 1
         ProceedWithThisCar = True
 
         result = addTag(i, "title", 0)
@@ -37,12 +36,11 @@ if (data['totalResultCount'] > 0):
 
         # interior color
         if "interiorColor" in i["specifications"]:
-            if (i["specifications"]["interiorColor"]["value"] not in ('Coffee', 'Cognac', 'Black', 'Coffee Sensafin', 'Tartufo', 'Tartufo Extended', 'Coffee W/Sensafin Upholstery', 'Cognac Sensafin', 'Blk Sensafin', 'Black Sensafin', 'Kpsw Black Sensafin')):
-               result = result + addTag(i["specifications"]["interiorColor"], "value", "interior color")
+            if ((i["specifications"]["interiorColor"]["value"].find("Silverstone") != -1)
+            or (i["specifications"]["interiorColor"]["value"].find("Ivory") != -1)):
+                result = result + "interior color: unicorn found! \n"
             else:
                 ProceedWithThisCar = False
-            if i["specifications"]["interiorColor"]["value"].find("Ivory") != -1:
-                result = result + "interior color: unicorn found! \n"
         else:
             result = result + "interior color: no information found \n"
 
@@ -52,8 +50,6 @@ if (data['totalResultCount'] > 0):
             result = result + addTag(i["specifications"]["color"], "value", "exterior color ")
         else:
             result = result + "exterior color: no information found \n"
-        result = result + "http://www.autotrader.com" + i['website']['href'] + "\n"
-
 
         # packages
         if "packages" in i:
@@ -64,7 +60,10 @@ if (data['totalResultCount'] > 0):
         else:
             result = result + "Packages: no information found \n"
 
+        result = result + "http://www.autotrader.com" + i['website']['href'] + "\n"
+
         if ProceedWithThisCar:
+            counter += 1
             print(result)
-            print('Scanned: ', counter)
+    print('Cars found: ', counter)
 
