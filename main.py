@@ -1,41 +1,65 @@
 from urllib.request import urlopen
 import json
 
-url = "https://www.autotrader.com/rest/searchresults/base?startYear=2023&zip=29492&makeCode1=BMW&modelCode1=BMWX7&searchRadius=0&minPrice=80000&maxPrice=89000&sortBy=datelistedDESC"
+minPrice=75000
+maxPrice=85000
+url = f"https://www.autotrader.com/rest/searchresults/base?startYear=2023&zip=29492&makeCode1=BMW&modelCode1=BMWX7&searchRadius=0&minPrice={minPrice}&maxPrice={maxPrice}&sortBy=datelistedDESC"
 response = urlopen(url)
 data = json.loads(response.read())
 
-if (data['totalResultCount'] > 0):
-    # for i in data:
-    #    print(json.dumps(i, indent=1))
-    # print( data['totalResultCount'])
-    x = 0
-    for i in data['listings']:
-        x += 1
-        #   debug
-        # print(i['vin'])
 
-        myprintln = i["title"], "Interior color:", i["specifications"]["interiorColor"]["value"], i["vin"]
-        if "packages" in i:
-            myprintln = myprintln, i['packages']
-        if i['pricingDetail']['salePrice'] == 0:
-            if "msrp" in i['pricingDetail']:
-                currency_string = "${:,.2f}".format(i['pricingDetail']['msrp'])
-                myprintln = myprintln, currency_string
+def addTag(i, tagName, overwriteLabel):
+    if overwriteLabel != 0:
+        label = overwriteLabel
+    else:
+        label = tagName
+    if tagName in i:
+        if i[tagName]:
+            myValue = f"{label} : {i[tagName]} \n"
         else:
-            currency_string = "${:,.2f}".format(i['pricingDetail']['salePrice'])
-            myprintln = myprintln, currency_string
+            myValue = f"{label} : no information found \n"
+    else:
+        myValue = f"{label} : no information found \n"
+    return myValue
+
+
+if (data['totalResultCount'] > 0):
+    counter = 0
+    for i in data['listings']:
+        counter += 1
+        ProceedWithThisCar = True
+
+        result = addTag(i, "title", 0)
+        result = result + addTag(i,"vin", 0)
+        result = result + addTag(i['pricingDetail'], "salePrice", 0)
+        result = result + addTag(i['pricingDetail'], "msrp", 0)
+
+        # interior color
+        if "interiorColor" in i["specifications"]:
+            if (i["specifications"]["interiorColor"]["value"] not in ('Coffee', 'Cognac', 'Black', 'Coffee Sensafin', 'Tartufo', 'Tartufo Extended', 'Coffee W/Sensafin Upholstery', 'Cognac Sensafin', 'Blk Sensafin', 'Black Sensafin', 'Kpsw Black Sensafin')):
+               result = result + addTag(i["specifications"]["interiorColor"], "value", "interior color")
+            else:
+                ProceedWithThisCar = False
+        else:
+            result = result + "interior color: no information found \n"
+
+        # exterior color
         if "color" in i["specifications"]:
-            myprintln = myprintln, "exterior color: ", i["specifications"]["color"]["value"]
+            result = result + addTag(i["specifications"]["color"], "value", "exterior color ")
+        else:
+            result = result + "exterior color: no information found \n"
+        result = result + "http://www.autotrader.com" + i['website']['href'] + "\n"
 
-        myprintln = myprintln, i['website']['href']
+        # packages
+        if "packages" in i:
+            if 'Executive Package' not in i['packages']:
+                ProceedWithThisCar = False
+            else:
+                result = result + addTag(i, 'packages', 0)
+        else:
+            result = result + "Packages: no information found \n"
 
-        # Now we're gonna filter
-        if (i["specifications"]["interiorColor"]["value"] not in ('Coffee','Cognac','Black','Coffee Sensafin','Tartufo', 'Coffee W/Sensafin Upholstery','Cognac Sensafin')):
-            if "packages" in i and 'Executive Package' in i['packages']:
-                # sold
-                if i["vin"] not  in ('5UX23EM06P9R78708'):
-                   print(json.dumps(myprintln, indent=1))
-                   #print(i["vin"])
-                   #print(json.dumps(i, indent=1))
-    # print('amount fetched', x)
+        if ProceedWithThisCar:
+            print(result)
+            print('Scanned: ', counter)
+
