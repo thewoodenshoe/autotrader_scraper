@@ -34,14 +34,18 @@ if (data['totalResultCount'] > 0):
         result = result + addTag(i['pricingDetail'], "salePrice", 0)
         result = result + addTag(i['pricingDetail'], "msrp", 0)
 
+
         # interior color
         if "interiorColor" in i["specifications"]:
             if (i["specifications"]["interiorColor"]["value"] not in ('Coffee', 'Cognac', 'Black', 'Coffee Sensafin', 'Tartufo', 'Tartufo Extended', 'Coffee W/Sensafin Upholstery', 'Cognac Sensafin', 'Blk Sensafin', 'Black Sensafin', 'Kpsw Black Sensafin')):
                result = result + addTag(i["specifications"]["interiorColor"], "value", "interior color")
             else:
                 ProceedWithThisCar = False
+            if i["specifications"]["interiorColor"]["value"].find("Ivory") != -1:
+                result = result + "interior color: unicorn found! \n"
         else:
             result = result + "interior color: no information found \n"
+
 
         # exterior color
         if "color" in i["specifications"]:
@@ -49,6 +53,7 @@ if (data['totalResultCount'] > 0):
         else:
             result = result + "exterior color: no information found \n"
         result = result + "http://www.autotrader.com" + i['website']['href'] + "\n"
+
 
         # packages
         if "packages" in i:
