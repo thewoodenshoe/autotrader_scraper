@@ -38,7 +38,7 @@ if (data['totalResultCount'] > 0):
         if "interiorColor" in i["specifications"]:
             if ((i["specifications"]["interiorColor"]["value"].find("Silverstone") != -1)
             or (i["specifications"]["interiorColor"]["value"].find("Ivory") != -1)):
-                result = result + "interior color: unicorn found! \n"
+                result = result + addTag(i["specifications"]["interiorColor"], "value", "interior color")
             else:
                 ProceedWithThisCar = False
         else:
