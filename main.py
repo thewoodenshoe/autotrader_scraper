@@ -1,8 +1,8 @@
 from urllib.request import urlopen
 import json
 
-minPrice=75000
-maxPrice=850000
+minPrice=70000
+maxPrice=890000
 url = f"https://www.autotrader.com/rest/searchresults/base?startYear=2023&zip=29492&makeCode1=BMW&modelCode1=BMWX7&searchRadius=0&minPrice={minPrice}&maxPrice={maxPrice}&sortBy=datelistedDESC"
 response = urlopen(url)
 data = json.loads(response.read())
@@ -36,11 +36,12 @@ if (data['totalResultCount'] > 0):
 
         # interior color
         if "interiorColor" in i["specifications"]:
-            if ((i["specifications"]["interiorColor"]["value"].find("Silverstone") != -1)
-            or (i["specifications"]["interiorColor"]["value"].find("Ivory") != -1)):
-                result = result + addTag(i["specifications"]["interiorColor"], "value", "interior color")
-            else:
-                ProceedWithThisCar = False
+            myList = ['Silverstone', 'silverstone', 'Ivory', 'ivory']
+            ProceedWithThisCar = False
+            for item in myList:
+                if ((i["specifications"]["interiorColor"]["value"].find(item) != -1)):
+                    result = result + addTag(i["specifications"]["interiorColor"], "value", "interior color")
+                    ProceedWithThisCar = True
         else:
             result = result + "interior color: no information found \n"
 
