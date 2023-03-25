@@ -1,12 +1,11 @@
 from urllib.request import urlopen
 import json
 
-minPrice=70000
-maxPrice=890000
+minPrice=60000
+maxPrice=80000
 url = f"https://www.autotrader.com/rest/searchresults/base?startYear=2023&zip=29492&makeCode1=BMW&modelCode1=BMWX7&searchRadius=0&minPrice={minPrice}&maxPrice={maxPrice}&numRecords=100&sortBy=datelistedDESC"
 response = urlopen(url)
 data = json.loads(response.read())
-
 
 def addTag(i, tagName, overwriteLabel):
     if overwriteLabel != 0:
@@ -63,6 +62,7 @@ if (data['totalResultCount'] > 0):
 
         result = result + "http://www.autotrader.com" + i['website']['href'] + "\n"
 
+        # if we want to continue
         if ProceedWithThisCar:
             counter += 1
             print(result)
