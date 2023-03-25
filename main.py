@@ -3,7 +3,7 @@ import json
 
 minPrice=70000
 maxPrice=890000
-url = f"https://www.autotrader.com/rest/searchresults/base?startYear=2023&zip=29492&makeCode1=BMW&modelCode1=BMWX7&searchRadius=0&minPrice={minPrice}&maxPrice={maxPrice}&sortBy=datelistedDESC"
+url = f"https://www.autotrader.com/rest/searchresults/base?startYear=2023&zip=29492&makeCode1=BMW&modelCode1=BMWX7&searchRadius=0&minPrice={minPrice}&maxPrice={maxPrice}&numRecords=100&sortBy=datelistedDESC"
 response = urlopen(url)
 data = json.loads(response.read())
 
@@ -36,10 +36,10 @@ if (data['totalResultCount'] > 0):
 
         # interior color
         if "interiorColor" in i["specifications"]:
-            myList = ['Silverstone', 'silverstone', 'Ivory', 'ivory']
+            myList = ['silver', 'ivory']
             ProceedWithThisCar = False
             for item in myList:
-                if ((i["specifications"]["interiorColor"]["value"].find(item) != -1)):
+                if ((i["specifications"]["interiorColor"]["value"].lower().find(item) != -1)):
                     result = result + addTag(i["specifications"]["interiorColor"], "value", "interior color")
                     ProceedWithThisCar = True
         else:
@@ -48,16 +48,16 @@ if (data['totalResultCount'] > 0):
 
         # exterior color
         if "color" in i["specifications"]:
-            result = result + addTag(i["specifications"]["color"], "value", "exterior color ")
+            result = result + addTag(i["specifications"]["color"], "value", "exterior color")
         else:
             result = result + "exterior color: no information found \n"
 
         # packages
         if "packages" in i:
-            if 'Executive Package' not in i['packages']:
-                ProceedWithThisCar = False
-            else:
+            if 'Executive Package' in i['packages']:
                 result = result + addTag(i, 'packages', 0)
+            else:
+                ProceedWithThisCar = False
         else:
             result = result + "Packages: no information found \n"
 
